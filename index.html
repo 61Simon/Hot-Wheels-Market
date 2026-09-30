@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HWVault | Магазин Hot Wheels</title>
+    <link rel="icon" type="image/jpeg" href="./hotwheels/logo/mak.jpg" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/hotwheels.css">
+    <style>
+        .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    animation: modalFadeIn 0.3s ease;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    color: var(--gray);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.close-btn:hover {
+    color: var(--primary);
+}
+        .wishlist-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+        /* Image Modal Styles */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            overflow: auto;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .image-modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .close-image-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            z-index: 1;
+        }
+
+        .close-image-modal:hover {
+            color: var(--accent);
+            transform: rotate(90deg);
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .cart-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cart-notification.show {
+            opacity: 1;
+        }
+
+        .cart-notification.success {
+            background-color: #28a745;
+        }
+
+        .cart-notification.error {
+            background-color: #dc3545;
+        }
+
+        .cart-notification.warning {
+            background-color: #457b9d;
+            color: #212529;
+        }
+        
+        /* Login Modal Styles */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .login-modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .login-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .close-login-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: var(--gray);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .close-login-modal:hover {
+            color: var(--primary);
+        }
+
+        .login-form h3 {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            text-align: center;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .login-form input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(69, 123, 157, 0.2);
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--gray);
+        }
+
+        .register-link a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .register-link a:hover {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-car"></i>
+                <span>HWVault</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home" data-translate="home">Головна</a></li>
+                    <li><a href="#products" data-translate="products">Машинки</a></li>
+                    <li><a href="#reviews" data-translate="reviews">Відгуки</a></li>
+                    <li><a href="#loyalty" data-translate="loyalty">Програма лояльності</a></li>
+                    <li><a href="#contact" data-translate="contact">Контакти</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="btn-login" id="login-btn">
+                    <i class="fas fa-user"></i> Увійти
+                </button>
+                
+                <div class="wishlist-icon-container">
+                    <div class="wishlist-icon">
+                        <i class="fas fa-heart"></i>
+                        <span class="wishlist-count">0</span>
+                    </div>
+                    <div class="wishlist-dropdown">
+                        <div class="wishlist-header">
+                            <h3><i class="fas fa-heart"></i> Список бажань</h3>
+                            <button class="close-wishlist"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="wishlist-items" id="wishlist-items">
+                            <p class="empty-wishlist">Список бажань порожній</p>
+                        </div>
+                        <div class="wishlist-summary">
+                            <div class="wishlist-actions">
+                                <button class="btn" id="clear-wishlist">Очистити список</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                    <div class="cart-dropdown">
+                        <div class="cart-header">
+                            <h3><i class="fas fa-shopping-cart"></i> Ваш кошик</h3>
+                            <button class="close-cart"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="cart-items" id="cart-items">
+                            <p class="empty-cart">Кошик порожній</p>
+                        </div>
+                        <div class="cart-summary">
+                            <div class="cart-total" id="cart-total">
+                                <span>Всього:</span>
+                                <span>0 ₴</span>
+                            </div>
+                            <div class="cart-actions">
+                                <button class="btn" id="clear-cart">Очистити кошик</button>
+                                <a href="#order-form" class="btn btn-primary">Оформити замовлення</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Колекційні машинки Hot Wheels</h1>
+            <p>Знайдіть унікальні моделі для вашої колекції у нашому магазині</p>
+            <a href="#products" class="btm pulse">Перейти до каталогу</a>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" placeholder="Я шукаю..." id="search-input">
+                <button id="search-button"><i class="fas fa-search"></i> Пошук</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section" id="products">
+        <div class="container">
+            <div class="section-title">
+                <h2>Наші машинки</h2>
+                <p>Виберіть ідеальну машинку для своєї колекції</p>
+            </div>
+            <div class="products-grid" id="products-grid">
+                
+            </div>
+        </div>
+    </section>
+    <!-- Counter Section -->
+<section class="counter-section">
+    <div class="container">
+        <div class="section-title">
+            <h2 style="color: white">Наші досягнення</h2>
+            <p>Ми пишаємося тим, що пропонуємо найкращий сервіс</p>
+        </div>
+        <div class="counter-container">
+            <div class="counter-item">
+                <div class="counter-number" data-target="78">0</div>
+                <div class="counter-text">Задоволених клієнтів</div>
+            </div>
+            <div class="counter-item">
+                <div class="counter-number" data-target="15">0</div>
+                <div class="counter-text">Унікальних моделей</div>
+            </div>
+            <div class="counter-item">
+                <div class="counter-number" data-target="3">0</div>
+                <div class="counter-text">Колекційних серій</div>
+            </div>
+            <div class="counter-item">
+                <div class="counter-number" data-target="3">0</div>
+                <div class="counter-text">У середньому дні доставки</div>
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- Slider Section -->
+<section class="slider-section">
+    <div class="slider-container">
+        <div class="slider" id="slider">
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Hot Wheels Collection">
+                <div class="slide-content">
+                    <h3>Гаряча новинка!</h3>
+                    <p>Легендарні машинки Hot Wheels — тільки у нас!</p>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Hot Wheels Sale">
+                <div class="slide-content">
+                    <h3>Спеціальні пропозиції</h3>
+                    <p>Знижки до 30% на вибрані моделі</p>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Hot Wheels Limited">
+                <div class="slide-content">
+                    <h3>Обмежені серії</h3>
+                    <p>Унікальні моделі для колекціонерів</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-controls">
+            <button id="prev-slide"><i class="fas fa-chevron-left"></i></button>
+            <button id="next-slide"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="slide-dots" id="slide-dots"></div>
+    </div>
+</section>
+    <!-- Categories Section -->
+<section class="categories-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Категорії товарів</h2>
+            <p>Виберіть категорію, що вас цікавить</p>
+        </div>
+        <div class="categories-grid">
+            <div class="category-card">
+                <i class="fas fa-car"></i>
+                <h3>Колекційні</h3>
+                <p>Ексклюзивні моделі для колекціонерів</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-bolt"></i>
+                <h3>Новинки</h3>
+                <p>Найрідчіші моделі Hot Wheels</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-fire"></i>
+                <h3>Хіти продаж</h3>
+                <p>Найпопулярніші моделі</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-percentage"></i>
+                <h3>Акції</h3>
+                <p>Товари зі знижкою</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-star"></i>
+                <h3>Обмежені серії</h3>
+                <p>Рідкісні колекційні моделі</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-box-open"></i>
+                <h3>Набори</h3>
+                <p>Комплекти з кількох машинок</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Reviews Section -->
+    <section class="reviews-section" id="reviews">
+        <div class="reviews-container">
+            <div class="section-title">
+                <h2>Відгуки наших клієнтів</h2>
+                <p>Поділіться своїми враженнями про наш магазин</p>
+            </div>
+            
+            <div class="reviews-layout">
+                <div class="reviews-content">
+                    <div class="reviews-grid" id="reviews-list">
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-avatar">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Андрій Коваленко">
+                                </div>
+                                <div>
+                                    <div class="review-author">Андрій Коваленко</div>
+                                    <div class="review-date">15.05.2025</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="review-text">
+                                Чудовий магазин! Замовляв колекційну модель Porsche 911 GT3, прийшла в ідеальному стані. Доставка швидка, упаковка якісна. Обов'язково ще куплятиму тут!
+                            </div>
+                            <div class="review-photos">
+                                <img src="https://i.ebayimg.com/images/g/8OQAAOSwzX9nRO7L/s-l400.jpg" alt="Фото відгуку" class="review-photo">
+                            </div>
+                        </div>
+                        
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-avatar">
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Марія Петренко">
+                                </div>
+                                <div>
+                                    <div class="review-author">Марія Петренко</div>
+                                    <div class="review-date">22.02.2025</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="review-text">
+                                Купила синові на день народження набір Hot Wheels. Залишилася дуже задоволена! Великий вибір, приємні ціни, а головне - справжні оригінальні машинки, а не підробки.
+                            </div>
+                            <div class="review-photos">
+                                <img src="https://i.ebayimg.com/images/g/4SQAAOSwqB9nj0V3/s-l1200.jpg" alt="Фото відгуку" class="review-photo">
+                                <img src="https://i.ebayimg.com/images/g/~pQAAOSwWwtl183W/s-l400.jpg" alt="Фото відгуку" class="review-photo">
+                            </div>
+                        </div>
+                        
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-avatar">
+                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Віктор Іваненко">
+                                </div>
+                                <div>
+                                    <div class="review-author">Віктор Іваненко</div>
+                                    <div class="review-date">28.12.2024</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="review-text">
+                                Колекціоную Hot Wheels вже понад 10 років. Цей магазин - один з небагатьох, де можна знайти справді рідкісні моделі. Персонал дуже знаючий, допомогли підібрати машинку для моєї колекції.
+                            </div>
+                            <div class="review-photos">
+                                <img src="https://a.allegroimg.com/original/1ecdca/76d665f4409f807d1369ccd1af08" alt="Фото відгуку" class="review-photo">
+                            </div>
+                        </div>
+                        
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-avatar">
+                                    <div class="initials">ОК</div>
+                                </div>
+                                <div>
+                                    <div class="review-author">Олександр Коваль</div>
+                                    <div class="review-date">10.04.2025</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <div class="review-text">
+                                Замовляв декілька моделей для колекції. Все прийшло швидко, але одна машинка була з невеликим дефектом. Менеджер швидко вирішив проблему - запропонував знижку на наступне замовлення. Рівень сервісу вражає!
+                            </div>
+                        </div>
+                        
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-avatar">
+                                    <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Ірина Сидоренко">
+                                </div>
+                                <div>
+                                    <div class="review-author">Ірина Сидоренко</div>
+                                    <div class="review-date">05.03.2025</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="review-text">
+                                Купила чоловікові на ювілей обмежену серію. Враження від покупки тільки позитивні! Машинка прийшла в оригінальній упаковці, без пошкоджень. Дуже швидка доставка - всього 2 дні. Дякую!
+                            </div>
+                        </div>
+                        
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-avatar">
+                                    <div class="initials">ПМ</div>
+                                </div>
+                                <div>
+                                    <div class="review-author">Петро Міщенко</div>
+                                    <div class="review-date">18.01.2025</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="review-text">
+                                Хороший магазин, але варто додати більше способів оплати. В цілому задоволений покупкою, але доставка зайняла трохи більше часу, ніж очікувалось.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="add-review-form-container">
+                        <div class="add-review-form">
+                            <h3>Залишити свій відгук</h3>
+                            <form id="review-form">
+                                <!-- Аватар -->
+                                <div class="avatar-upload">
+                                    <div class="avatar-preview" id="avatar-preview">
+                                        <div class="initials">?</div>
+                                    </div>
+                                    <div class="avatar-upload-buttons">
+                                        <label for="avatar-upload" class="btn">
+                                            <i class="fas fa-camera"></i> Обрати аватар
+                                        </label>
+                                        <button type="button" class="btn btn-danger" id="remove-avatar">
+                                            <i class="fas fa-trash"></i> Видалити
+                                        </button>
+                                        <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+                                    </div>
+                                </div>
+                                
+                                <!-- Ім'я -->
+                                <div class="form-group">
+                                    <label for="review-name">Ваше ім'я*</label>
+                                    <input type="text" id="review-name" required>
+                                    <div class="error-message" id="name-error">Будь ласка, введіть ім'я</div>
+                                </div>
+                                
+                                <!-- Рейтинг -->
+                                <div class="form-group">
+                                    <label>Ваша оцінка*</label>
+                                    <div class="rating-input">
+                                        <i class="far fa-star" data-rating="1"></i>
+                                        <i class="far fa-star" data-rating="2"></i>
+                                        <i class="far fa-star" data-rating="3"></i>
+                                        <i class="far fa-star" data-rating="4"></i>
+                                        <i class="far fa-star" data-rating="5"></i>
+                                    </div>
+                                    <div class="error-message" id="rating-error">Будь ласка, оберіть рейтинг</div>
+                                </div>
+                                
+                                <!-- Текст відгуку -->
+                                <div class="form-group">
+                                    <label for="review-text">Ваш відгук*</label>
+                                    <textarea id="review-text" required></textarea>
+                                    <div class="error-message" id="text-error">Будь ласка, напишіть відгук</div>
+                                </div>
+                                
+                                <!-- Фото -->
+                                <div class="form-group">
+                                    <label>Фото (до 5 шт.)</label>
+                                    <input type="file" id="review-photos" accept="image/*" multiple style="display: none;">
+                                    <button type="button" class="btn" id="add-photos-btn">
+                                        <i class="fas fa-images"></i> Додати фото
+                                    </button>
+                                    <div class="photo-preview" id="photo-preview"></div>
+                                </div>
+                                
+                                <!-- Кнопка відправки -->
+                                <button type="submit" class="btm" style="width: 100%;">
+                                    <i class="fas fa-paper-plane"></i> Надіслати відгук
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Loyalty Program Section -->
+    <section class="loyalty-section" id="loyalty">
+        <div class="container loyalty-container">
+            <h2>Наша програма лояльності</h2>
+            <p>Збирайте бали за кожну покупку та отримуйте ексклюзивні бонуси та знижки</p>
+            <a href="#loyalty-info" class="btm pulse">Дізнатися більше</a>
+
+            <div class="loyalty-steps">
+                <div class="loyalty-step slide-in">
+                    <i class="fas fa-gem"></i>
+                    <h3>Базовий рівень</h3>
+                    <p>Знижка 5% на всі покупки від 1 000 грн</p>
+                </div>
+                <div class="loyalty-step slide-in">
+                    <i class="fas fa-crown"></i>
+                    <h3>Золотий рівень</h3>
+                    <p>Знижка 10% + безкоштовна доставка на замовлення від 2 500 грн</p>
+                </div>
+                <div class="loyalty-step slide-in">
+                    <i class="fas fa-rocket"></i>
+                    <h3>Платиновий рівень</h3>
+                    <p>Знижка 15% + ексклюзивні моделі доступні для замовлень від 5 000 грн</p>
+                </div>                
+            </div>
+        </div>
+    </section>
+
+    <!-- Loyalty Info Section -->
+    <section class="loyalty-info-section" id="loyalty-info">
+        <div class="container">
+            <div class="section-title">
+                <h2>Деталі програми лояльності</h2>
+                <p>Як накопичувати бали та отримувати вигоду</p>
+            </div>
+            <div class="loyalty-details">
+                <div class="loyalty-detail fade-in">
+                    <i class="fas fa-coins"></i>
+                    <h3>Накопичувальна система</h3>
+                    <p>1 гривня = 1 бал. 100 балів = 10 грн знижки на наступну покупку</p>
+                </div>
+                <div class="loyalty-detail fade-in">
+                    <i class="fas fa-birthday-cake"></i>
+                    <h3>Святкові бонуси</h3>
+                    <p>Отримуйте додаткові бали у ваш день народження</p>
+                </div>
+                <div class="loyalty-detail fade-in">
+                    <i class="fas fa-gift"></i>
+                    <h3>Ексклюзивні пропозиції</h3>
+                    <p>Доступ до обмежених серій та спеціальних пропозицій</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Form Section -->
+    <section class="order-form-section" id="order-form">
+        <div class="order-form-container">
+            <h2>Оформлення замовлення</h2>
+            
+            <div class="order-summary">
+                <h3><i class="fas fa-receipt"></i> Ваше замовлення</h3>
+                <div id="order-summary-items">
+                    <p>Кошик порожній</p>
+                </div>
+                <div class="order-total" id="order-summary-total">
+                    <span>Всього:</span>
+                    <span>0 ₴</span>
+                </div>
+            </div>
+            
+            <form id="order-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="order-name">Ваше ім'я*</label>
+                        <input type="text" id="order-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="order-phone">Номер телефону*</label>
+                        <input type="tel" id="order-phone" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="order-email">Email</label>
+                    <input type="email" id="order-email">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="order-city">Місто*</label>
+                        <input type="text" id="order-city" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="order-delivery">Спосіб доставки*</label>
+                        <select id="order-delivery" required>
+                            <option value="">Оберіть спосіб доставки</option>
+                            <option value="nova-poshta">Нова Пошта</option>
+                            <option value="ukrposhta">Укрпошта</option>
+                            <option value="courier">Кур'єр (тільки Запоріжжя)</option>
+                            <option value="pickup">Самовивіз (м. Запоріжжя)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="order-payment">Спосіб оплати*</label>
+                    <select id="order-payment" required>
+                        <option value="">Оберіть спосіб оплати</option>
+                        <option value="cash">Накладений платіж</option>
+                        <option value="card">Оплата карткою онлайн</option>
+                        <option value="privat24">Приват24</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="order-comments">Коментар до замовлення</label>
+                    <textarea id="order-comments"></textarea>
+                </div>
+                
+                <button type="submit" class="btm pulse" style="width: 100%;">Підтвердити замовлення</button>
+            </form>
+        </div>
+    </section>
+    <!-- Registration Section -->
+<section class="registration-section" id="registration">
+    <div class="container">
+        <div class="registration-container">
+            <h2>Реєстрація</h2>
+            <form class="registration-form" id="registration-form">
+                <div class="form-group">
+                    <label for="reg-name">Ім'я*</label>
+                    <input type="text" id="reg-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email*</label>
+                    <input type="email" id="reg-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-phone">Телефон</label>
+                    <input type="tel" id="reg-phone">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Пароль*</label>
+                    <input type="password" id="reg-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm-password">Підтвердьте пароль*</label>
+                    <input type="password" id="reg-confirm-password" required>
+                </div>
+                <button type="submit" class="btm pulse">Зареєструватись</button>
+                <div class="login-link">
+                    Вже є обліковий запис? <a href="#" id="show-login">Увійти</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="container contact-container">
+            <div class="contact-info">
+                <h3>Наші контакти</h3>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>м. Запоріжжя, вул. Проспект, 45</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+38 (050) 045-0190</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>HVVVault@gmail.com</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Пн-Пт: 9:00 - 20:00<br>Сб-Нд: 10:00 - 18:00</span>
+                </div>
+                <!-- В секции contact-section после contact-info добавим: -->
+                <section class="map-section">
+                    <div class="container">
+                        <h2>Ми на карті</h2>
+                        <div class="map-container" style="width: 100%; height: 400px;">
+                            <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2679.3398665870445!2d35.17762247640477!3d47.81363097120966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40dc5e0cc7f86153%3A0xd18a65ada6373104!2z0L_RgNC-0YHQv9C10LrRgiDQodC-0LHQvtGA0L3QuNC5LCA0NSwg0JfQsNC_0L7RgNGW0LbQttGPLCDQl9Cw0L_QvtGA0ZbQt9GM0LrQsCDQvtCx0LvQsNGB0YLRjCwgNjkwMDA!5e0!3m2!1suk!2sua!4v1747659780409!5m2!1suk!2sua" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+                </section>
+                <h3 style="margin-top: 2rem;">Ми в соцмережах</h3>
+                <div class="social-links">
+                    <a href="https://t.me/simonsssbio" class="social-link"><i class="fab fa-telegram"></i></a>
+                    <a href="https://www.instagram.com/?locale=ru" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/facebook/?locale=uk_UA" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.youtube.com/?app=desktop&hl=ru" class="social-link"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="contact-form">
+                <h3>Зв'яжіться з нами</h3>
+                <form id="contact-form">
+                    <div class="form-group">
+                        <label for="contact-name">Ваше ім'я</label>
+                        <input type="text" id="contact-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Email</label>
+                        <input type="email" id="contact-email">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Повідомлення</label>
+                        <textarea id="contact-message"></textarea>
+                    </div>
+                    <button type="submit" class="btm pulse">Надіслати</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-col">
+                <h4>Магазин</h4>
+                <ul>
+                    <li><a href="#about" class="footer-link">Про нас</a></li>
+                    <li><a href="#delivery" class="footer-link">Доставка та оплата</a></li>
+                    <li><a href="#guarantee" class="footer-link">Гарантія та повернення</a></li>
+                    <li><a href="#blog" class="footer-link">Блог</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Каталог</h4>
+                <ul>
+                    <li><a href="#new" class="footer-link">Новинки</a></li>
+                    <li><a href="#Hits" class="footer-link">Хіти продажів</a></li>
+                    <li><a href="#sell" class="footer-link">Акції</a></li>
+                    <li><a href="#colle" class="footer-link">Колекційні серії</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Клієнтам</h4>
+                <ul>
+                    <li><a href="#loyal" class="footer-link">Програма лояльності</a></li>
+                    <li><a href="#serti" class="footer-link">Подарункові сертифікати</a></li>
+                    <li><a href="#gifts" class="footer-link">Корпоративні подарунки</a></li>
+                    <li><a href="#FAQ" class="footer-link">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Контакти</h4>
+                <ul>
+                    <li><a href="#shop" class="footer-link">Наші магазини</a></li>
+                    <li><a href="#part" class="footer-link">Співпраця</a></li>
+                    <li><a href="#Vakans" class="footer-link">Вакансії</a></li>
+                    <li><a href="#backcall" class="footer-link">Зворотній зв'язок</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Hot Wheels Store. Всі права захищені.</p>
+        </div>
+    </footer>
+    <!-- Modal Sections (hidden by default) -->
+    <div id="about" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h2>Про нас</h2>
+            <p>Ми - магазин Hot Wheels в Україні. Наша місія - приносити радість колекціонерам та шанувальникам якісних іграшкових машинок.</p>
+            <p>Наш магазин працює з 2024 року і за цей час ми стали одними з найкращих на ринку колекційних моделей Hot Wheels в Україні. Ми співпрацюємо безпосередньо з виробником, тому можемо гарантувати оригінальність усіх наших товарів.</p>
+        </div>
+    </div>
+
+    <div id="delivery" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h2>Доставка та оплата</h2>
+            <p>Доставка по всій Україні Новою Поштою та Укрпоштою. Оплата готівкою при отриманні або онлайн.</p>
+            <h3>Терміни доставки:</h3>
+            <ul>
+                <li>Запоріжжя - 1-2 дні</li>
+                <li>Інші міста - 2-5 днів</li>
+            </ul>
+            <h3>Вартість доставки:</h3>
+            <ul>
+                <li>Від 50 грн - Нова Пошта</li>
+                <li>Від 35 грн - Укрпошта</li>
+                <li>Безкоштовно - при замовленні від 1000 грн</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="guarantee" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h2>Гарантія та повернення</h2>
+            <p>Ми надаємо 14-денний термін для повернення товару з моменту отримання.</p>
+            <p>Усі наші товари є оригінальними та новими, ми гарантуємо їх якість.</p>
+            <p>У разі виявлення дефекту, ми замінимо товар або повернемо кошти.</p>
+        </div>
+    </div>
+    <div id="FAQ" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h2>Поширені запитання (FAQ)</h2>
+
+<h3>Чи оригінальні у вас моделі Hot Wheels?</h3>
+<p>Так, усі моделі постачаються напряму від офіційних виробників. Ми гарантуємо 100% оригінальність товарів.</p>
+
+<h3>Як оформити замовлення?</h3>
+<p>Оберіть бажаний товар, додайте до кошика, натисніть «Оформити замовлення» і заповніть усі необхідні поля форми.</p>
+
+<h3>Які доступні способи доставки?</h3>
+<p>Доставка здійснюється Новою Поштою, Укрпоштою, кур'єром по Києву або самовивозом з магазину в Запоріжжі.</p>
+
+<h3>Скільки коштує доставка?</h3>
+<p>Вартість доставки від 35 грн. Безкоштовна доставка при замовленні від 1000 грн.</p>
+
+<h3>Які способи оплати доступні?</h3>
+<p>Можна оплатити накладеним платежем, карткою онлайн або через Приват24.</p>
+
+<h3>Як працює програма лояльності?</h3>
+<p>За кожну витрачену гривню ви отримуєте 1 бал. 100 балів = 10 грн знижки на наступну покупку.</p>
+
+<h3>Чи можна повернути товар?</h3>
+<p>Так, у вас є 14 днів на повернення товару з моменту отримання. Товар має бути новим та в оригінальній упаковці.</p>
+
+<h3>Як зв’язатися з вами?</h3>
+<p>Телефонуйте за номером +38 (050) 045-0190 або пишіть на електронну пошту HVVVault@gmail.com.</p>
+
+        </div>
+    </div>
+
+    <div id="blog" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h2>Наш блог</h2>
+            <p>У нашому блозі ви знайдете цікаві статті про колекціонування Hot Wheels, огляди нових моделей та поради для колекціонерів.</p>
+            <p>Підпишіться на нашу розсилку, щоб отримувати сповіщення про нові публікації.</p>
+        </div>
+    </div>
+    <div id="new" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Новинки</h3>
+            <p>У нашому каталозі регулярно з’являються нові моделі Hot Wheels — не пропустіть найсвіжіші поповнення.</p>
+        </div>
+    </div>
+    <div id="Hits" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Хіти продажів</h3>
+<p>Перегляньте найпопулярніші моделі, які обирають наші клієнти найчастіше.</p>
+        </div>
+    </div>
+    <div id="sell" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Акції</h3>
+<p>Скористайтеся вигідними пропозиціями та знижками — лише обмежений час!</p>
+        </div>
+    </div>
+    <div id="loyal" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Програма лояльності</h3>
+<p>Збирайте бали за кожну покупку та отримуйте знижки, бонуси й доступ до ексклюзивних товарів.</p>
+        </div>
+    </div>
+    <div id="colle" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Колекційні серії</h3>
+<p>Унікальні моделі для справжніх поціновувачів Hot Wheels. Ідеально для вашої колекції.</p>
+        </div>
+    </div>
+    <div id="serti" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Подарункові сертифікати</h3>
+<p>Не знаєте, що подарувати? Даруйте вибір — сертифікати на будь-яку суму.</p>
+        </div>
+    </div>
+    <div id="gifts" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Корпоративні подарунки</h3>
+<p>Замовлення для компаній, святкові набори та брендовані подарунки для клієнтів або працівників.</p>
+        </div>
+    </div>
+    <div id="shop" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Наші магазини</h3>
+<p>Фізичний магазин знаходиться у м. Запоріжжя, вул. Проспект, 45. Чекаємо на вас!</p>
+        </div>
+    </div>
+    <div id="part" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Співпраця</h3>
+<p>Відкриті до партнерств. Якщо ви колекціонер, постачальник або блогер — пишіть нам.</p>
+        </div>
+    </div>
+    <div id="Vakans" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Вакансії</h3>
+<p>Ми постійно ростемо й шукаємо нових членів команди. Перегляньте актуальні вакансії на сайті або напишіть нам.</p>
+        </div>
+    </div>
+    <div id="backcall" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close-btn">&times;</a>
+            <h3>Зворотній зв'язок</h3>
+<p>Є питання або пропозиції? Напишіть нам через форму зворотного зв'язку на сайті або на email.</p>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="login-modal">
+        <div class="login-modal-content">
+            <a href="#" class="close-login-modal">&times;</a>
+            <form class="login-form" id="login-form">
+                <h3>Вхід в аккаунт</h3>
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Пароль</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btm pulse">Увійти</button>
+                <div class="register-link">
+                    Немає аккаунта? <a href="#registration" id="show-register">Зареєструватися</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Other modals would be here -->
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" style="background-color: rgba(0, 0, 0, 0.2);">
+        <span class="close-image-modal">&times;</span>
+        <div class="image-modal-content">
+            <img id="expandedImage" src="" alt="Expanded product image">
+        </div>
+    </div>
+    <div id="image-modal" class="image-modal" style="background-color: rgba(0, 0, 0, 0.2);">
+        <span class="close-image-modal">&times;</span>
+        <div class="image-modal-content">
+            <img id="modal-img" src="" alt="Expanded view">
+        </div>
+    </div>
+    
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <script src="./js/hotwheels.js"></script>
+    <script>
+        // Обработчик формы отзыва
+    
+        // Функция для установки рейтинга
+        function setRatingStars(rating) {
+            const stars = document.querySelectorAll('.rating-input i');
+            stars.forEach(star => {
+                star.classList.remove('active');
+                if (parseInt(star.getAttribute('data-rating')) <= rating) {
+                    star.classList.add('active');
+                }
+            });
+        }
+    
+        // Функция для сброса рейтинга
+        function resetRatingStars() {
+            document.querySelectorAll('.rating-input i').forEach(star => {
+                star.classList.remove('active');
+            });
+        }
+    
+        // Обработчик кликов на звезды рейтинга
+        document.querySelectorAll('.rating-input i').forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                setRatingStars(rating);
+            });
+        });
+        
+        // Login/Register modal toggle
+        const loginBtn = document.getElementById('login-btn');
+        const loginModal = document.getElementById('login-modal');
+        const showLoginLink = document.getElementById('show-login');
+        const showRegisterLink = document.getElementById('show-register');
+        const closeLoginModal = document.querySelector('.close-login-modal');
+        
+        loginBtn.addEventListener('click', function() {
+            loginModal.classList.add('show');
+        });
+        
+        showLoginLink?.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('registration').scrollIntoView({behavior: 'smooth'});
+            setTimeout(() => {
+                loginModal.classList.add('show');
+            }, 500);
+        });
+        
+        showRegisterLink?.addEventListener('click', function(e) {
+            e.preventDefault();
+            loginModal.classList.remove('show');
+            document.getElementById('registration').scrollIntoView({behavior: 'smooth'});
+        });
+        
+        closeLoginModal.addEventListener('click', function(e) {
+            e.preventDefault();
+            loginModal.classList.remove('show');
+        });
+        
+        loginModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+            }
+        });
+        
+        // Wishlist functionality
+        let wishlist = [];
+        const wishlistIcon = document.querySelector('.wishlist-icon');
+        const wishlistCount = document.querySelector('.wishlist-count');
+        const wishlistItemsContainer = document.getElementById('wishlist-items');
+        const wishlistDropdown = document.querySelector('.wishlist-dropdown');
+        const closeWishlistBtn = document.querySelector('.close-wishlist');
+        const clearWishlistBtn = document.getElementById('clear-wishlist');
+        
+        // Toggle wishlist dropdown
+        wishlistIcon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            wishlistDropdown.classList.toggle('show');
+        });
+        
+        closeWishlistBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            wishlistDropdown.classList.remove('show');
+        });
+        
+        document.addEventListener('click', function() {
+            wishlistDropdown.classList.remove('show');
+        });
+        
+        wishlistDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Clear wishlist
+        clearWishlistBtn?.addEventListener('click', function() {
+            wishlist = [];
+            updateWishlist();
+            showCartNotification('Список бажань очищено', 'success');
+        });
+        
+        // Add to wishlist from products
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('add-to-wishlist') || e.target.closest('.add-to-wishlist')) {
+                const button = e.target.classList.contains('add-to-wishlist') ? e.target : e.target.closest('.add-to-wishlist');
+                const productId = parseInt(button.getAttribute('data-id'));
+                addToWishlist(productId);
+            }
+        });
+        
+        // Remove from wishlist
+        wishlistItemsContainer.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-wishlist-item') || e.target.closest('.remove-wishlist-item')) {
+                const element = e.target.classList.contains('remove-wishlist-item') ? e.target : e.target.closest('.remove-wishlist-item');
+                const productId = parseInt(element.getAttribute('data-id'));
+                removeFromWishlist(productId);
+            }
+        });
+        
+        // Add product to wishlist
+        function addToWishlist(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            if (!wishlist.some(item => item.id === productId)) {
+                wishlist.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    image: product.image
+                });
+                
+                updateWishlist();
+                showCartNotification('Товар додано до списку бажань', 'success');
+                
+                // Animation
+                const button = document.querySelector(`.add-to-wishlist[data-id="${productId}"]`);
+                if (button) {
+                    button.innerHTML = '<i class="fas fa-check"></i> В списку';
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="fas fa-heart"></i> В список';
+                    }, 1000);
+                }
+                
+                // Pulse wishlist icon
+                wishlistIcon.classList.add('pulse');
+                setTimeout(() => {
+                    wishlistIcon.classList.remove('pulse');
+                }, 1000);
+                
+                // Show wishlist dropdown
+                wishlistDropdown.classList.add('show');
+            } else {
+                showCartNotification('Цей товар вже є у списку бажань', 'warning');
+            }
+        }
+        
+        // Remove product from wishlist
+        function removeFromWishlist(productId) {
+            wishlist = wishlist.filter(item => item.id !== productId);
+            updateWishlist();
+            showCartNotification('Товар видалено зі списку бажань', 'warning');
+        }
+        
+        // Update wishlist UI
+        function updateWishlist() {
+            // Update wishlist count
+            wishlistCount.textContent = wishlist.length;
+            
+            // Update wishlist dropdown
+            if (wishlist.length === 0) {
+                wishlistItemsContainer.innerHTML = '<p class="empty-wishlist">Список бажань порожній</p>';
+            } else {
+                wishlistItemsContainer.innerHTML = '';
+                
+                wishlist.forEach(item => {
+                    const wishlistItem = document.createElement('div');
+                    wishlistItem.className = 'wishlist-item';
+                    wishlistItem.innerHTML = `
+                        <img src="${item.image}" alt="${item.title}">
+                        <div class="wishlist-item-info">
+                            <div class="wishlist-item-title">${item.title}</div>
+                            <div class="wishlist-item-price">${item.price.toFixed(2)} ₴</div>
+                            <button class="move-to-cart" data-id="${item.id}">
+                                <i class="fas fa-cart-plus"></i> До кошика
+                            </button>
+                        </div>
+                        <div class="remove-wishlist-item" data-id="${item.id}">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    `;
+                    wishlistItemsContainer.appendChild(wishlistItem);
+                });
+            }
+        }
+        
+        // Move to cart from wishlist
+        wishlistItemsContainer.addEventListener('click', function(e) {
+            if (e.target.classList.contains('move-to-cart') || e.target.closest('.move-to-cart')) {
+                const button = e.target.classList.contains('move-to-cart') ? e.target : e.target.closest('.move-to-cart');
+                const productId = parseInt(button.getAttribute('data-id'));
+                addToCart(productId);
+                removeFromWishlist(productId);
+            }
+        });
+        updateWishlist()
+        function renderProducts() {
+            productsGrid.innerHTML = '';
+            products.forEach(product => {
+                const ratingStars = renderRatingStars(product.rating);
+                const isInWishlist = wishlist.some(item => item.id === product.id);
+                
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
+                    <div class="wishlist-icon ${isInWishlist ? 'active' : ''}" data-id="${product.id}">
+                        
+                    </div>
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.title}">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.title}</h3>
+                        <p class="product-series">${product.series}</p>
+                        <div class="product-rating">
+                            ${ratingStars}
+                        </div>
+                        <div class="product-price">
+                            ${product.oldPrice ? `<span class="discount-price">${product.oldPrice.toFixed(2)} ₴</span>` : ''}
+                            <div class="price">${product.price.toFixed(2)} ₴</div>
+                            <div class="product-actions">
+                                <a href="car-${product.id}.html" class="btn-details"><i class="fas fa-info-circle"></i> Детальніше</a>
+                                <button class="btn-buy add-to-cart" data-id="${product.id}"><i class="fas fa-cart-plus"></i> <span style="font-weight: bold;"> Купити</button>
+                                <button class="btn-wishlist add-to-wishlist" data-id="${product.id}">
+                                    <i class="fas fa-heart"></i> <span style="font-weight: bold;">${isInWishlist ? 'В списку' : 'В список'}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                productsGrid.appendChild(productCard);
+            });
+        }
+        renderProducts();
+    </script>
+</body>
+</html>
